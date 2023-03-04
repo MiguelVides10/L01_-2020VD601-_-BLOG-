@@ -15,7 +15,7 @@ namespace L01_2020VD601.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllCali")]
+        [Route("GetAll")]
         public IActionResult Get()
         {
             List<calificaciones> calificacioneslst = (from e in _blogContexto.calificaciones
@@ -28,8 +28,23 @@ namespace L01_2020VD601.Controllers
             return Ok(calificacioneslst);
         }
 
+        [HttpGet]
+        [Route("GetbyId/{id}")]
+        public IActionResult Get(int id)
+        {
+            calificaciones? comentario = (from e in _blogContexto.calificaciones
+                                       where e.calificacionId == id
+                                       select e).FirstOrDefault();
+            if (comentario == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(comentario);
+        }
+
         [HttpPost]
-        [Route("AddCali")]
+        [Route("Add")]
         public IActionResult GuardarCalificacion([FromBody] calificaciones califiacion)
         {
             try
@@ -78,6 +93,22 @@ namespace L01_2020VD601.Controllers
             _blogContexto.Remove(calificacion);
             _blogContexto.SaveChanges();
             return Ok(calificacion);
+        }
+
+        [HttpGet]
+        [Route("filterByPub/{publicacionId}")]
+
+        public IActionResult filterByPublication(int publicacionId) 
+        {
+            List<calificaciones> calificacioneslst = (from e in _blogContexto.calificaciones
+                                          where e.publicacionId == publicacionId
+                                          select e).ToList();
+
+            if (calificacioneslst == null)
+            {
+                return NotFound();
+            }
+            return Ok(calificacioneslst);
         }
     }
 }

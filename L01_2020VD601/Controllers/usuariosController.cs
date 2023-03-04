@@ -30,6 +30,21 @@ namespace L01_2020VD601.Controllers
             return Ok(usuarioslst);
         }
 
+        [HttpGet]
+        [Route("GetbyId/{id}")]
+        public IActionResult Get(int id)
+        {
+            usuarios? comentario = (from e in _blogContexto.usuarios
+                                          where e.usuarioId == id
+                                          select e).FirstOrDefault();
+            if (comentario == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(comentario);
+        }
+
         [HttpPost]
         [Route("Add")]
         public IActionResult GuardarUsuario([FromBody] usuarios usuario) {
@@ -81,6 +96,22 @@ namespace L01_2020VD601.Controllers
             _blogContexto.Remove(usuario);
             _blogContexto.SaveChanges();
             return Ok(usuario);
+        }
+
+        [HttpGet]
+        [Route("findbyParameters/{nombre}&{apellido}&{rol}")]
+
+        public IActionResult finder(string nombre, string apellido, int rol)
+        {
+            List<usuarios> usuarioslst = (from e in _blogContexto.usuarios
+                                          where e.nombre.Contains(nombre) && e.apellido.Contains(apellido)
+                                          && e.rolId == rol
+                                          select e).ToList();
+            if(usuarioslst == null)
+            {
+                return NotFound();
+            }
+            return Ok(usuarioslst);
         }
     }
 }
