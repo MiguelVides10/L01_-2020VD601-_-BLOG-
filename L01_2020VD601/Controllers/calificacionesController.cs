@@ -10,8 +10,8 @@ namespace L01_2020VD601.Controllers
     public class calificacionesController : ControllerBase
     {
         private readonly blogContext _blogContexto;
-        public calificacionesController(blogContext context) { 
-            _blogContexto = context
+        public calificacionesController(blogContext context) {
+            _blogContexto = context;
         }
 
         [HttpGet]
@@ -60,6 +60,24 @@ namespace L01_2020VD601.Controllers
             _blogContexto.Entry(calificacionActual).State = EntityState.Modified;
             _blogContexto.SaveChanges();
             return Ok(calificacionActual);
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+
+        public IActionResult BorrarCalificaion(int id)
+        {
+            calificaciones? calificacion = (from e in _blogContexto.calificaciones
+                                 where e.calificacionId == id
+                                 select e).FirstOrDefault();
+            if (calificacion == null)
+            {
+                return NotFound();
+            }
+            _blogContexto.Attach(calificacion);
+            _blogContexto.Remove(calificacion);
+            _blogContexto.SaveChanges();
+            return Ok(calificacion);
         }
     }
 }
